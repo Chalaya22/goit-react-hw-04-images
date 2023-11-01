@@ -1,48 +1,51 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import css from './Searchbar.module.css';
 import { FiSearch } from 'react-icons/fi';
 
-class Searchbar extends Component {
-  state = {
-    name: ' ',
-  };
+const Searchbar = ({ handelSearch }) => {
+  const [name, setName] = useState(' ');
 
-  handleInputChange = event => {
+  const handleInputChange = event => {
     const { name, value } = event.currentTarget;
-    this.setState({ [name]: value });
+    switch (name) {
+      case 'name': {
+        setName(value);
+        return;
+      }
+      default:
+        return;
+    }
   };
-  reset = () => {
-    this.setState({ name: ' ', number: ' ' });
+  const reset = () => {
+    setName(' ');
   };
 
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
-    this.props.handelSearch(this.state.name);
-    this.reset();
+    handelSearch(name);
+    reset();
   };
 
-  render() {
-    return (
-      <header className={css.searchBar}>
-        <form onSubmit={this.handleSubmit} className={css.searchForm}>
-          <button type="submit" className={css.searchFormBtn}>
-            <span>
-              <FiSearch size="20" color="black" />
-            </span>
-          </button>
+  return (
+    <header className={css.searchBar}>
+      <form onSubmit={handleSubmit} className={css.searchForm}>
+        <button type="submit" className={css.searchFormBtn}>
+          <span>
+            <FiSearch size="20" color="black" />
+          </span>
+        </button>
 
-          <input
-            className={css.searchformImput}
-            name="name"
-            type="text"
-            onChange={this.handleInputChange}
-            value={this.state.name}
-            placeholder="Search images and photos"
-            required
-          />
-        </form>
-      </header>
-    );
-  }
-}
+        <input
+          className={css.searchformImput}
+          name="name"
+          type="text"
+          onChange={handleInputChange}
+          value={name}
+          placeholder="Search images and photos"
+          required
+        />
+      </form>
+    </header>
+  );
+};
 export default Searchbar;

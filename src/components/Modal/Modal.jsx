@@ -1,44 +1,42 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { StyledModal } from './Styled';
 
-class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown);
+const Modal = ({ closeModalImage, modalData }) => {
+  useEffect(() => {
+    const handleKeyDown = event => {
+      if (event.code === 'Escape') {
+        closeModalImage();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
     document.body.style.overflow = 'hidden';
-  }
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown);
-    document.body.style.overflow = 'auto';
-  }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'auto';
+    };
+  }, [closeModalImage]);
 
-  handleOverlayClick = event => {
+  const handleOverlayClick = event => {
     if (event.target === event.currentTarget) {
-      this.props.closeModalImage();
-    }
-  };
-  handleKeyDown = event => {
-    if (event.code === 'Escape') {
-      this.props.closeModalImage();
+      closeModalImage();
     }
   };
 
-  render() {
-    return (
-      <StyledModal>
-        <div onClick={this.handleOverlayClick} className="overlay">
-          <div className="modal">
-            <img
-              width="480"
-              height="auto"
-              onClick={this.props.closeModalImage}
-              src={this.props.modalData.largeImageURL}
-              alt={this.props.modalData.tag}
-            />
-          </div>
+  return (
+    <StyledModal>
+      <div onClick={handleOverlayClick} className="overlay">
+        <div className="modal">
+          <img
+            width="480"
+            height="auto"
+            onClick={closeModalImage}
+            src={modalData.largeImageURL}
+            alt={modalData.tag}
+          />
         </div>
-      </StyledModal>
-    );
-  }
-}
+      </div>
+    </StyledModal>
+  );
+};
 export default Modal;
