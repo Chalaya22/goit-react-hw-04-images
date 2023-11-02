@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import Notiflix from 'notiflix';
 import css from './App.module.css';
 import Searchbar from './Searchbar/Searchbar';
@@ -10,95 +10,87 @@ import Button from './Button/Button';
 import fetchImages from '../services/fetch';
 import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
 
-export class App extends Component {
-  state = {
-    // modalData: null,
-    error: null,
-    images: [],
-    query: '',
-    page: 1,
+export const App = () => {
+  const [images, setImages] = useState([]);
+  const [query, setQuary] = useState(' ');
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState(null);
+  const [isloading, setIsLoading] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [modalData, setModalData] = useState([]);
+  // const [showLoadMoreBtn, setShowLoadMoreBtn] = useState(false);
 
-    isloading: false,
+  useEffect(() => {
+    if (query !== '') {
+      const fatch = async () => {
+        setIsLoading(true);
+        try {
+          const response = await fetchImages(query, page);
 
-    isOpenModal: false,
-    modalData: [],
-
-    showLoadMoreBtn: false,
-  };
-  async componentDidUpdate(_, prevState) {
-    if (
-      prevState.page !== this.state.page ||
-      prevState.query !== this.state.query
-    ) {
-      this.setState({ isLoading: true });
-      try {
-        const response = await fetchImages(this.state.query, this.state.page);
-        this.setState(prevState => ({
-          images: [...prevState.images, ...response],
-        }));
-
-        if (response.length === 0) {
-          this.setState({ showLoadMoreBtn: false });
-          Notiflix.Notify.warning('Sorry,🥶 no images for your request...');
+          setImages(prevState => [...prevState, ...response]);
+          // if (response.length === 0) {
+          //   showLoadMoreBtn(false);
+          //   Notiflix.Notify.warning('Sorry,🥶 no images for your request...');
+          // }
+        } catch (error) {
+          setError(error);
+          Notiflix.Notify.failure('ERROR ..😢😢😢..try again later');
+        } finally {
+          setIsLoading(false);
         }
-      } catch (error) {
-        this.setState({ error });
-        Notiflix.Notify.failure('ERROR ..😢😢😢..try again later');
-      } finally {
-        this.setState({ isLoading: false });
-      }
+      };
+      fatch();
     }
-  }
+  }, [page, query]);
 
   //modalWimdow
-  openModalImage = largeImageURL => {
-    this.setState({ isOpenModal: true, modalData: largeImageURL });
+  const openModalImage = largeImageURL => {
+    // this.setState({ isOpenModal: true, modalData: largeImageURL });
+    setIsOpenModal(true);
+    setModalData(largeImageURL);
   };
-  closeModalImage = () => {
-    this.setState({ isOpenModal: false, modalData: null });
+  const closeModalImage = () => {
+    // this.setState({ isOpenModal: false, modalData: null });
+    setIsOpenModal(false);
+    setModalData(null);
   };
 
   //serchbar
-  handelSearch = query => {
-    this.setState({ query: query, page: 1, images: [] });
+  const handelSearch = () => {
+    // this.setState({ query: query, page: 1, images: [] });
+    setQuary(query);
+    setPage(1);
+    setImages([]);
   };
 
   // button Load More
-  onButtonLoadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
+  const onButtonLoadMore = () => {
+    setPage(prevState => prevState + 1);
+    // this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
-  render() {
-    return (
-      <div className={css.app}>
-        {this.state.error !== null && (
-          <p> Ooops...Error massage: {this.state.error}</p>
-        )}
-        <Searchbar handelSearch={this.handelSearch} />
+  return (
+    <div className={css.app}>
+      {error !== null && <p> Ooops...Error massage: {error}</p>}
+      <Searchbar handelSearch={handelSearch} />
 
-        <ImageGallery>
-          {this.state.images.map(image => (
-            <ImageGalleryItem
-              image={image}
-              key={image.id}
-              openModalImage={this.openModalImage}
-            />
-          ))}
-        </ImageGallery>
-
-        {this.state.isLoading && <Loader />}
-
-        {this.state.images.length > 0 && (
-          <Button onButtonLoadMore={this.onButtonLoadMore} />
-        )}
-
-        {this.state.isOpenModal && (
-          <Modal
-            closeModalImage={this.closeModalImage}
-            modalData={this.state.modalData}
+      <ImageGallery>
+        {images.map(image => (
+          <ImageGalleryItem
+            image={image}
+            key={image.id}
+            openModalImage={openModalImage}
           />
-        )}
-      </div>
-    );
-  }
-}
+        ))}
+      </ImageGallery>
+
+      {isloading && <Loader />}
+
+      {images.length > 0 && <Button onButtonLoadMore={onButtonLoadMore} />}
+
+      {isOpenModal && (
+        <Modal closeModalImage={closeModalImage} modalData={modalData} />
+      )}
+    </div>
+  );
+};

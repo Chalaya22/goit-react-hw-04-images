@@ -3,7 +3,7 @@ import css from './ImageGalleryItem.module.css';
 const ImageGalleryItem = ({ image, openModalImage }) => {
   const { id, webformatURL, tags, largeImageURL } = image;
   return (
-    <li className={css.ImageGalleryItem}>
+    <li className={css.ImageGalleryItem} key={id}>
       <img
         id={id}
         src={webformatURL}

@@ -1,9 +1,5 @@
 import css from './ImageGallery.module.css';
-const ImageGallery = ({ handleGelleryList, children }) => {
-  return (
-    <ul className={css.ImageGallery} onClick={handleGelleryList}>
-      {children}
-    </ul>
-  );
+const ImageGallery = ({ children }) => {
+  return <ul className={css.ImageGallery}>{children}</ul>;
 };
 export default ImageGallery;

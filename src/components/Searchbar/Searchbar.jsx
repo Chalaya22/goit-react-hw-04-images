@@ -8,10 +8,10 @@ const Searchbar = ({ handelSearch }) => {
   const handleInputChange = event => {
     const { name, value } = event.currentTarget;
     switch (name) {
-      case 'name': {
+      case 'name':
         setName(value);
-        return;
-      }
+        break;
+
       default:
         return;
     }
