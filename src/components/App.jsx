@@ -21,26 +21,24 @@ export const App = () => {
   const [showLoadMoreBtn, setShowLoadMoreBtn] = useState(false);
 
   useEffect(() => {
-    if (query !== '') {
-      const fatch = async () => {
-        setIsLoading(true);
-        try {
-          const response = await fetchImages(query, page);
+    const fatch = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetchImages(query, page);
 
-          setImages(prevState => [...prevState, ...response]);
-          if (response.length === 0) {
-            showLoadMoreBtn(false);
-            Notiflix.Notify.warning('Sorry,🥶 no images for your request...');
-          }
-        } catch (error) {
-          setError(error);
-          Notiflix.Notify.failure('ERROR ..😢😢😢..try again later');
-        } finally {
-          setIsLoading(false);
+        setImages([...images, ...response]);
+        if (response.length === 0) {
+          showLoadMoreBtn(false);
+          Notiflix.Notify.warning('Sorry,🥶 no images for your request...');
         }
-      };
-      fatch();
-    }
+      } catch (error) {
+        setError(error);
+        Notiflix.Notify.failure('ERROR ..😢😢😢..try again later');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fatch();
   }, [page, query]);
 
   //modalWimdow
