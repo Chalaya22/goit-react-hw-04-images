@@ -18,7 +18,7 @@ export const App = () => {
   const [isloading, setIsLoading] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [modalData, setModalData] = useState([]);
-  // const [showLoadMoreBtn, setShowLoadMoreBtn] = useState(false);
+  const [showLoadMoreBtn, setShowLoadMoreBtn] = useState(false);
 
   useEffect(() => {
     if (query !== '') {
@@ -28,10 +28,10 @@ export const App = () => {
           const response = await fetchImages(query, page);
 
           setImages(prevState => [...prevState, ...response]);
-          // if (response.length === 0) {
-          //   showLoadMoreBtn(false);
-          //   Notiflix.Notify.warning('Sorry,🥶 no images for your request...');
-          // }
+          if (response.length === 0) {
+            showLoadMoreBtn(false);
+            Notiflix.Notify.warning('Sorry,🥶 no images for your request...');
+          }
         } catch (error) {
           setError(error);
           Notiflix.Notify.failure('ERROR ..😢😢😢..try again later');
