@@ -24,7 +24,6 @@ export const App = () => {
       setIsLoading(true);
       try {
         const response = await fetchImages(query, page);
-
         setImages(prevState => [...prevState, ...response]);
       } catch (error) {
         setError(error);
