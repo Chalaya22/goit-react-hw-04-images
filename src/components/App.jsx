@@ -24,7 +24,7 @@ export const App = () => {
       setIsLoading(true);
       try {
         const response = await fetchImages(query, page);
-        setImages(prevState => [...prevState, ...response]);
+        setImages(prevState => [...prevState, ...response.hits]);
       } catch (error) {
         setError(error);
         Notiflix.Notify.failure('ERROR ..😢😢😢..try again later');
@@ -48,7 +48,7 @@ export const App = () => {
   };
 
   //serchbar
-  const handelSearch = () => {
+  const handelSearch = query => {
     // this.setState({ query: query, page: 1, images: [] });
     setQuary(query);
     setPage(1);
@@ -66,7 +66,7 @@ export const App = () => {
       {error !== null && <p> Ooops...Error massage: {error}</p>}
       <Searchbar handelSearch={handelSearch} />
 
-      <ImageGallery>
+      {/* <ImageGallery>
         {images.map(image => (
           <ImageGalleryItem
             image={image}
@@ -74,7 +74,8 @@ export const App = () => {
             openModalImage={openModalImage}
           />
         ))}
-      </ImageGallery>
+      </ImageGallery> */}
+      <ImageGallery images={images} openModalImage={openModalImage} />
 
       {isloading && <Loader />}
 
