@@ -53,7 +53,7 @@ export const App = () => {
             );
           }
         } catch (error) {
-          setError(error);
+          error !== null && setError(error);
           Notiflix.Notify.failure('ERROR ..😢😢😢..try again later');
         } finally {
           setIsLoading(false);
@@ -91,6 +91,7 @@ export const App = () => {
 
   return (
     <div className={css.app}>
+      {/* {error !== null && <p> Ooops...Error massage: {error}</p>} */}
       <Searchbar handelSearch={handelSearch} />
 
       <ImageGallery images={images} openModalImage={openModalImage} />
