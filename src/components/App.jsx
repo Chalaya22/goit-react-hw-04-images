@@ -8,7 +8,7 @@ import Loader from './Loader/Loader';
 import Button from './Button/Button';
 
 import fetchImages from '../services/fetch';
-import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
+// import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
 
 export const App = () => {
   const [images, setImages] = useState([]);
@@ -22,22 +22,42 @@ export const App = () => {
 
   useEffect(() => {
     const fatch = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetchImages(query, page);
-        setImages(prevState => [...prevState, ...response.hits]);
-        if (page < Math.ceil(response.totalHits / 12))
-          setShowLoadMoreBtn(false);
+      if (query !== ' ') {
+        setIsLoading(true);
+        try {
+          const response = await fetchImages(query, page);
 
-        if (response.hits.length === 0) {
-          setShowLoadMoreBtn(false);
-          Notiflix.Notify.warning('Sorry,🥶 no images for your request...');
+          if (response.totalHits === 0) {
+            // setShowLoadMoreBtn(false);
+            Notiflix.Notify.failure(
+              'Sorry, there are no images matching your search query. Please try again.'
+            );
+            return;
+          } else {
+            setImages(prevState => [...prevState, ...response.hits]);
+          }
+
+          if (response.hits.length > 0 && page === 1) {
+            Notiflix.Notify.success(
+              `Hooray! We found ${response.totalHits} images.`
+            );
+          }
+
+          const picsLeft = response.totalHits - 12 * page;
+          if (picsLeft > 0) {
+            setShowLoadMoreBtn(false);
+          } else {
+            setShowLoadMoreBtn(true);
+            Notiflix.Notify.info(
+              `This is the last page. No more images to show`
+            );
+          }
+        } catch (error) {
+          setError(error);
+          Notiflix.Notify.failure('ERROR ..😢😢😢..try again later');
+        } finally {
+          setIsLoading(false);
         }
-      } catch (error) {
-        setError(error);
-        Notiflix.Notify.failure('ERROR ..😢😢😢..try again later');
-      } finally {
-        setIsLoading(false);
       }
     };
     fatch();
@@ -65,24 +85,14 @@ export const App = () => {
 
   // button Load More
   const onButtonLoadMore = () => {
-    setPage(prevState => prevState + 1);
+    !showLoadMoreBtn && setPage(prevState => prevState + 1);
     // this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   return (
     <div className={css.app}>
-      {error !== null && <p> Ooops...Error massage: {error}</p>}
       <Searchbar handelSearch={handelSearch} />
 
-      {/* <ImageGallery>
-        {images.map(image => (
-          <ImageGalleryItem
-            image={image}
-            key={image.id}
-            openModalImage={openModalImage}
-          />
-        ))}
-      </ImageGallery> */}
       <ImageGallery images={images} openModalImage={openModalImage} />
 
       {isloading && <Loader />}
