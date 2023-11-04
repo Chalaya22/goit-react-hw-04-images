@@ -92,6 +92,7 @@ export const App = () => {
   return (
     <div className={css.app}>
       {error !== null && <p> Ooops...Error massage: {error}</p>}
+
       <Searchbar handelSearch={handelSearch} />
 
       <ImageGallery images={images} openModalImage={openModalImage} />
