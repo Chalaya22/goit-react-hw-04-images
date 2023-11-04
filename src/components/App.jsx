@@ -18,6 +18,7 @@ export const App = () => {
   const [isloading, setIsLoading] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [modalData, setModalData] = useState([]);
+  const [showLoadMoreBtn, setShowLoadMoreBtn] = useState(false);
 
   useEffect(() => {
     const fatch = async () => {
@@ -25,6 +26,13 @@ export const App = () => {
       try {
         const response = await fetchImages(query, page);
         setImages(prevState => [...prevState, ...response.hits]);
+        if (page < Math.ceil(response.totalHits / 12))
+          setShowLoadMoreBtn(false);
+
+        if (response.hits.length === 0) {
+          setShowLoadMoreBtn(false);
+          Notiflix.Notify.warning('Sorry,🥶 no images for your request...');
+        }
       } catch (error) {
         setError(error);
         Notiflix.Notify.failure('ERROR ..😢😢😢..try again later');
