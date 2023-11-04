@@ -8,7 +8,6 @@ import Loader from './Loader/Loader';
 import Button from './Button/Button';
 
 import fetchImages from '../services/fetch';
-// import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
 
 export const App = () => {
   const [images, setImages] = useState([]);
@@ -28,7 +27,7 @@ export const App = () => {
           const response = await fetchImages(query, page);
 
           if (response.totalHits === 0) {
-            // setShowLoadMoreBtn(false);
+            setShowLoadMoreBtn(false);
             Notiflix.Notify.failure(
               'Sorry, there are no images matching your search query. Please try again.'
             );
@@ -43,18 +42,15 @@ export const App = () => {
             );
           }
 
-          const picsLeft = response.totalHits - 12 * page;
-          if (picsLeft > 0) {
+          const restOfHits = response.totalHits - 12 * page;
+          if (restOfHits > 0) {
             setShowLoadMoreBtn(true);
           } else {
             setShowLoadMoreBtn(false);
-            Notiflix.Notify.info(
-              `This is the last page. No more images to show`
-            );
+            Notiflix.Notify.info(`Sorry,😐...No more images to show`);
           }
         } catch (error) {
           setError(error.massage);
-          // Notiflix.Notify.failure('ERROR ..😢😢😢..try again later');
         } finally {
           setIsLoading(false);
         }
