@@ -45,16 +45,16 @@ export const App = () => {
 
           const picsLeft = response.totalHits - 12 * page;
           if (picsLeft > 0) {
-            setShowLoadMoreBtn(false);
-          } else {
             setShowLoadMoreBtn(true);
+          } else {
+            setShowLoadMoreBtn(false);
             Notiflix.Notify.info(
               `This is the last page. No more images to show`
             );
           }
         } catch (error) {
-          error !== null && setError(error);
-          Notiflix.Notify.failure('ERROR ..😢😢😢..try again later');
+          setError(error.massage);
+          // Notiflix.Notify.failure('ERROR ..😢😢😢..try again later');
         } finally {
           setIsLoading(false);
         }
@@ -85,20 +85,20 @@ export const App = () => {
 
   // button Load More
   const onButtonLoadMore = () => {
-    !showLoadMoreBtn && setPage(prevState => prevState + 1);
+    setPage(prevState => prevState + 1);
     // this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   return (
     <div className={css.app}>
-      {/* {error !== null && <p> Ooops...Error massage: {error}</p>} */}
+      {error !== null && <p> Ooops...Error massage: {error}</p>}
       <Searchbar handelSearch={handelSearch} />
 
       <ImageGallery images={images} openModalImage={openModalImage} />
 
       {isloading && <Loader />}
 
-      {images.length > 0 && <Button onButtonLoadMore={onButtonLoadMore} />}
+      {showLoadMoreBtn && <Button onButtonLoadMore={onButtonLoadMore} />}
 
       {isOpenModal && (
         <Modal closeModalImage={closeModalImage} modalData={modalData} />
